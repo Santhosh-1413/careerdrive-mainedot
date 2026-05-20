@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MaineDOT - US Transportation Career Platform</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#fff;--bg2:#f7f7f5;--bg3:#f0ede8;
+  --text:#1a1a18;--text2:#6b6b66;--text3:#9c9a92;
+  --border:rgba(0,0,0,0.10);--border2:rgba(0,0,0,0.18);
+  --blue:#185FA5;--blue-bg:#E6F1FB;--blue-dk:#0C447C;
+  --green:#3B6D11;--green-bg:#EAF3DE;--green-dk:#27500A;
+  --amber:#854F0B;--amber-bg:#FAEEDA;
+  --purple-bg:#EEEDFE;--purple-dk:#3C3489;
+  --teal-bg:#E1F5EE;--teal-dk:#085041;
+  --red:#A32D2D;--red-bg:#FCEBEB;
+  --r:8px;--rl:12px;
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  font-size:14px;color:var(--text);background:var(--bg3);
+}
+@media(prefers-color-scheme:dark){:root{
+  --bg:#1e1e1c;--bg2:#2a2a27;--bg3:#161614;
+  --text:#e8e6df;--text2:#9c9a92;--text3:#6b6b66;
+  --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14);
+  --blue-bg:#0c3060;--blue-dk:#85B7EB;
+  --green-bg:#132d06;--green-dk:#97C459;
+  --amber-bg:#3a2200;--amber:#EF9F27;
+  --purple-bg:#1e1a40;--purple-dk:#AFA9EC;
+  --teal-bg:#04342C;--teal-dk:#9FE1CB;
+  --red-bg:#2d1010;
+}}
+body{display:flex;justify-content:center;padding:20px 16px;min-height:100vh}
+.shell{width:100%;max-width:820px;display:flex;flex-direction:column}
+
+/* topbar */
+.topbar{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--rl) var(--rl) 0 0;display:flex;align-items:center;border-bottom:none}
+.logo{padding:10px 14px;display:flex;align-items:center;gap:8px;border-right:0.5px solid var(--border)}
+.logo-icon{width:28px;height:28px;background:var(--blue);border-radius:7px;display:flex;align-items:center;justify-content:center}
+.logo-icon svg{width:15px;height:15px;fill:white}
+.logo-text{font-size:14px;font-weight:600;color:var(--text)}
+.logo-sub{font-size:11px;color:var(--text3);margin-left:2px}
+.tabs{display:flex;flex:1}
+.tab{flex:1;padding:10px 8px;font-size:12px;font-weight:500;text-align:center;cursor:pointer;color:var(--text2);border-bottom:2px solid transparent;display:flex;align-items:center;justify-content:center;gap:5px;transition:all 0.12s;border-top:0.5px solid var(--border);white-space:nowrap}
+.tab:hover{color:var(--text);background:var(--bg2)}
+.tab.active{color:var(--blue);border-bottom-color:var(--blue);background:var(--bg)}
+.tab svg{width:13px;height:13px;flex-shrink:0}
+
+/* model bar */
+.model-bar{background:var(--bg2);border:0.5px solid var(--border);border-top:none;padding:6px 14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.model-lbl{font-size:11px;color:var(--text2);flex-shrink:0}
+.model-sel{padding:4px 8px;font-size:12px;border:0.5px solid var(--border2);border-radius:var(--r);background:var(--bg);color:var(--text);max-width:280px}
+.status-dot{width:7px;height:7px;border-radius:50%;background:var(--green);flex-shrink:0}
+.status-dot.warn{background:var(--amber)}
+.status-dot.err{background:var(--red)}
+.model-note{font-size:11px;color:var(--text3)}
+
+/* api key input */
+.key-row{background:var(--bg2);border:0.5px solid var(--border);border-top:none;padding:5px 14px;display:flex;align-items:center;gap:8px;display:none}
+.key-row.show{display:flex}
+.key-inp{flex:1;padding:4px 8px;font-size:12px;border:0.5px solid var(--border2);border-radius:var(--r);background:var(--bg);color:var(--text);font-family:monospace}
+.key-inp:focus{outline:none;border-color:var(--blue)}
+.key-save{padding:4px 10px;font-size:12px;border:0.5px solid var(--blue);border-radius:var(--r);background:var(--blue);color:white;cursor:pointer}
+.key-lbl{font-size:11px;color:var(--text2);flex-shrink:0}
+
+/* ctx bar */
+.ctx-bar{background:var(--bg2);border:0.5px solid var(--border);border-top:none;padding:5px 14px;display:flex;align-items:center;gap:5px;min-height:30px;flex-wrap:wrap}
+.cpill{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:20px;font-size:11px;border:0.5px solid}
+.cpill.role{background:var(--blue-bg);color:var(--blue-dk);border-color:rgba(24,95,165,0.25)}
+.cpill.target{background:var(--green-bg);color:var(--green-dk);border-color:rgba(59,109,17,0.25)}
+.cpill.resume{background:var(--teal-bg);color:var(--teal-dk);border-color:rgba(15,110,86,0.25)}
+.cpill.jobs{background:var(--purple-bg);color:var(--purple-dk);border-color:rgba(83,74,183,0.25)}
+.cpill.loc{background:var(--amber-bg);color:var(--amber);border-color:rgba(133,79,11,0.25)}
+.cdot{width:5px;height:5px;border-radius:50%}
+.cpill.role .cdot{background:var(--blue)}
+.cpill.target .cdot{background:var(--green)}
+.cpill.resume .cdot{background:#0F6E56}
+.cpill.jobs .cdot{background:#534AB7}
+.cpill.loc .cdot{background:var(--amber)}
+.ctx-empty{font-size:11px;color:var(--text3)}
+
+/* chat */
+.chat-wrap{background:var(--bg);border:0.5px solid var(--border);border-top:none;display:flex;flex-direction:column}
+.msgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;min-height:460px;max-height:520px}
+.mrow{display:flex;gap:8px;align-items:flex-end}
+.mrow.user{flex-direction:row-reverse}
+.av{width:26px;height:26px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:white;flex-shrink:0}
+.user .av{background:var(--bg2);border:0.5px solid var(--border2);color:var(--text2)}
+.bubble{max-width:80%;padding:9px 13px;border-radius:14px;font-size:13px;line-height:1.55;color:var(--text)}
+.bot .bubble{background:var(--bg2);border:0.5px solid var(--border);border-bottom-left-radius:4px;max-width:100%}
+.user .bubble{background:var(--blue);color:white;border-bottom-right-radius:4px}
+.chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
+.chip{padding:5px 10px;border:0.5px solid var(--border2);border-radius:20px;font-size:12px;color:var(--text);cursor:pointer;background:var(--bg);transition:all 0.1s}
+.chip:hover{background:var(--blue-bg);border-color:var(--blue);color:var(--blue-dk)}
+.typing{display:flex;gap:4px;padding:9px 13px;background:var(--bg2);border:0.5px solid var(--border);border-radius:14px;border-bottom-left-radius:4px;width:fit-content}
+.typing span{width:5px;height:5px;border-radius:50%;background:var(--text3);animation:bl 1.2s infinite}
+.typing span:nth-child(2){animation-delay:.2s}
+.typing span:nth-child(3){animation-delay:.4s}
+@keyframes bl{0%,80%,100%{opacity:.2}40%{opacity:1}}
+
+/* job cards */
+.jcard{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--rl);padding:10px 12px;margin-top:5px}
+.jcard+.jcard{margin-top:5px}
+.jsrc{font-size:10px;font-weight:600;padding:2px 7px;border-radius:10px;display:inline-flex;align-items:center;gap:3px;margin-bottom:5px}
+.jsrc-usajobs{background:var(--blue-bg);color:var(--blue-dk)}
+.jsrc-adzuna{background:var(--green-bg);color:var(--green-dk)}
+.jsrc-default{background:var(--bg3);color:var(--text2)}
+.jtag{font-size:10px;padding:2px 6px;border-radius:10px;background:var(--blue-bg);color:var(--blue-dk)}
+.save-btn{font-size:11px;padding:3px 9px;border:0.5px solid var(--border2);border-radius:var(--r);background:transparent;color:var(--text2);cursor:pointer;margin-left:8px}
+.save-btn:hover{background:var(--green-bg);color:var(--green-dk);border-color:var(--green)}
+.save-btn.saved{background:var(--green-bg);color:var(--green-dk);border-color:var(--green)}
+.close-date{font-size:10px;color:var(--red);margin-left:8px}
+
+/* board cards */
+.board-card{display:flex;align-items:flex-start;gap:8px;padding:7px 10px;border:0.5px solid var(--border);border-radius:var(--r);background:var(--bg);text-decoration:none;cursor:pointer;margin-top:4px}
+.board-card:hover{border-color:var(--blue);background:var(--blue-bg)}
+.board-geo{font-size:10px;font-weight:600;padding:1px 6px;border-radius:10px}
+.geo-maine{background:var(--green-bg);color:var(--green-dk)}
+.geo-national{background:var(--blue-bg);color:var(--blue-dk)}
+
+/* map */
+.map-wrap{background:var(--bg);border:0.5px solid var(--border);border-top:none;display:none;flex-direction:column}
+.map-wrap.show{display:flex}
+.map-top{padding:9px 13px;border-bottom:0.5px solid var(--border);display:flex;gap:8px;background:var(--bg2)}
+.map-top input{flex:1;padding:6px 10px;font-size:13px;border:0.5px solid var(--border2);border-radius:var(--r);background:var(--bg);color:var(--text);outline:none}
+.map-top input:focus{border-color:var(--blue)}
+.map-top button{padding:6px 12px;font-size:12px;border:0.5px solid var(--blue);border-radius:var(--r);background:var(--blue);color:white;cursor:pointer;flex-shrink:0}
+.map-top button:hover{background:var(--blue-dk)}
+.map-canvas svg{display:block;width:100%;background:var(--bg)}
+.map-legend{display:flex;gap:12px;padding:6px 13px;flex-wrap:wrap;border-top:0.5px solid var(--border);background:var(--bg2)}
+.lg{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text2)}
+.lgd{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.map-detail{border-top:0.5px solid var(--border);padding:12px 13px}
+.map-detail-empty{font-size:12px;color:var(--text3);text-align:center;padding:12px}
+
+/* bottom */
+.bottom{background:var(--bg);border:0.5px solid var(--border);border-top:none;border-radius:0 0 var(--rl) var(--rl);padding:10px 13px;display:flex;flex-direction:column;gap:7px}
+.inp-row{display:flex;gap:7px;align-items:center}
+.inp-row input{flex:1;padding:9px 12px;font-size:13px;border:0.5px solid var(--border2);border-radius:var(--r);background:var(--bg2);color:var(--text);outline:none}
+.inp-row input:focus{border-color:var(--blue)}
+.send-btn{width:34px;height:34px;border-radius:var(--r);background:var(--blue);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.send-btn:hover{background:var(--blue-dk)}
+.send-btn svg{width:14px;height:14px;fill:white}
+.send-btn:disabled{opacity:.4;cursor:not-allowed}
+.upload-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.upload-btn{display:flex;align-items:center;gap:5px;padding:5px 10px;font-size:12px;border:0.5px dashed var(--border2);border-radius:var(--r);background:transparent;color:var(--text2);cursor:pointer}
+.upload-btn:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-bg)}
+.upload-btn.done{border-style:solid;border-color:var(--green);color:var(--green-dk);background:var(--green-bg)}
+.upload-btn svg{width:13px;height:13px}
+.hint{font-size:11px;color:var(--text3)}
+.spin{width:13px;height:13px;border:1.5px solid var(--border2);border-top-color:var(--blue);border-radius:50%;animation:sp .7s linear infinite;display:inline-block;margin-right:5px}
+@keyframes sp{to{transform:rotate(360deg)}}
+.it-type{font-size:10px;font-weight:600;padding:1px 6px;border-radius:8px;display:inline-block;margin-right:3px}
+.tsk{background:var(--blue-bg);color:var(--blue-dk)}
+.tct{background:var(--green-bg);color:var(--green-dk)}
+.tex{background:var(--purple-bg);color:var(--purple-dk)}
+.tco{background:var(--amber-bg);color:var(--amber)}
+.ddot{width:7px;height:7px;border-radius:50%;background:var(--border2);display:inline-block;margin-right:2px}
+.dfe{background:var(--blue)}.dfm{background:var(--amber)}.dfh{background:var(--red)}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- topbar -->
+<div class="topbar">
+  <div class="logo">
+    <div class="logo-icon"><svg viewBox="0 0 24 24"><path d="M4 16l2-8h12l2 8H4zm2-2h12l-1.5-6H7.5L6 14zM4 20h16v2H4v-2z"/></svg></div>
+    <span class="logo-text">MaineDOT</span>
+    <span class="logo-sub">US Transportation Careers</span>
+  </div>
+  <div class="tabs">
+    <div class="tab active" id="tab-jobs" onclick="setTab('jobs')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+      Find jobs
+    </div>
+    <div class="tab" id="tab-career" onclick="setTab('career')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z"/></svg>
+      Career chat
+    </div>
+    <div class="tab" id="tab-map" onclick="setTab('map')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3"/></svg>
+      Career map
+    </div>
+  </div>
+</div>
+
+<!-- model bar -->
+<div class="model-bar">
+  <span class="model-lbl">Model:</span>
+  <select class="model-sel" id="model-sel" onchange="onModelChange(this.value)">
+    <optgroup label="OpenAI (API key required)">
+      <option value="gpt-4o-mini" selected>GPT-4o mini — fast &amp; affordable</option>
+      <option value="gpt-4o">GPT-4o — most capable</option>
+    </optgroup>
+    <optgroup label="Local (Ollama required)">
+      <option value="llama3.2:3b">Llama 3.2 3B — free, local</option>
+    </optgroup>
+  </select>
+  <div class="status-dot" id="status-dot" title="Model status"></div>
+  <span class="model-note" id="model-note">GPT-4o mini</span>
+</div>
+
+<!-- API key row (shown for OpenAI models) -->
+<div class="key-row show" id="key-row">
+  <span class="key-lbl">OpenAI key:</span>
+  <input class="key-inp" id="key-inp" type="password" placeholder="sk-..." autocomplete="off"/>
+  <button class="key-save" onclick="saveKey()">Save</button>
+  <span class="hint" id="key-hint">Stored in browser only</span>
+</div>
+
+<!-- context pills -->
+<div class="ctx-bar" id="ctx-bar">
+  <span class="ctx-empty">Chat freely — ask about jobs, career advice, or certifications</span>
+</div>
+
+<!-- chat -->
+<div class="chat-wrap">
+  <div class="msgs" id="msgs"></div>
+</div>
+
+<!-- career map (shown in map tab) -->
+<div class="map-wrap" id="map-wrap">
+  <div class="map-top" style="flex-direction:column;gap:6px;padding:10px 13px">
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <span style="font-size:12px;color:var(--color-text-secondary);flex-shrink:0">Current role:</span>
+      <input id="role-inp" type="text" placeholder="e.g. Civil engineer, GIS specialist..." style="flex:1;min-width:180px"/>
+      <button id="gen-map-btn" onclick="generateMapForRole()">Generate map</button>
+      <button onclick="clearMap()" style="background:transparent;border:0.5px solid var(--color-border-secondary);color:var(--color-text-secondary)">Clear</button>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <span style="font-size:12px;color:var(--color-text-secondary);flex-shrink:0">Add a role:</span>
+      <input id="map-inp" type="text" placeholder="Add any specific role to map..." style="flex:1;min-width:180px"/>
+      <button onclick="addRoleToMap()">Add role</button>
+    </div>
+  </div>
+  <div class="map-canvas">
+    <svg id="map-svg" viewBox="0 0 680 300">
+      <text x="340" y="155" text-anchor="middle" font-size="13" fill="#9c9a92">Chat to set your role, then your map appears here</text>
+    </svg>
+  </div>
+  <div class="map-legend" id="map-legend" style="display:none">
+    <span class="lg"><span class="lgd" style="background:#185FA5"></span>Current</span>
+    <span class="lg"><span class="lgd" style="background:#3B6D11"></span>Easy ≤6mo</span>
+    <span class="lg"><span class="lgd" style="background:#BA7517"></span>Medium 6–18mo</span>
+    <span class="lg"><span class="lgd" style="background:#A32D2D"></span>Stretch 18mo+</span>
+    <span style="font-size:11px;color:var(--text3);margin-left:auto">Click any node</span>
+  </div>
+  <div class="map-detail" id="map-detail">
+    <div class="map-detail-empty">Click a role node to see transition details</div>
+  </div>
+</div>
+
+<!-- bottom bar -->
+<div class="bottom">
+  <div class="inp-row">
+    <input id="inp" type="text" placeholder="Ask about jobs, career paths, certifications..."/>
+    <button class="send-btn" id="send-btn" onclick="send()">
+      <svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
+    </button>
+  </div>
+  <div class="upload-row">
+    <button class="upload-btn" id="upload-btn" onclick="document.getElementById('resume-file').click()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      Upload resume (optional)
+    </button>
+    <input type="file" id="resume-file" style="display:none" accept=".pdf,.docx,.txt" onchange="uploadResume(this.files[0])"/>
+    <span class="hint" id="upload-hint">PDF, Word or text · personalises job search and career advice</span>
+  </div>
+</div>
+
+</div><!-- .shell -->
+
+<script>
+const API = 'http://localhost:8000';
+
+let sessionId = null;
+let activeTab = 'jobs';
+let activeModel = 'gpt-4o-mini';
+let busy = false;
+let profile = {};
+let mapData = { nodes:[], edges:[] };
+
+// Load saved API key
+const savedKey = localStorage.getItem('openai_key') || '';
+if (savedKey) { document.getElementById('key-inp').value = savedKey; updateStatus(); }
+
+/* ── Model switcher ── */
+function onModelChange(val) {
+  activeModel = val;
+  const isOllama = val.startsWith('llama') || val.startsWith('phi') || val.startsWith('mistral');
+  document.getElementById('key-row').className = isOllama ? 'key-row' : 'key-row show';
+  document.getElementById('model-note').textContent =
+    val === 'gpt-4o-mini' ? 'GPT-4o mini' :
+    val === 'gpt-4o' ? 'GPT-4o' :
+    val === 'llama3.2:3b' ? 'Llama 3.2 3B (local)' : val;
+  updateStatus();
+}
+
+function saveKey() {
+  const key = document.getElementById('key-inp').value.trim();
+  localStorage.setItem('openai_key', key);
+  document.getElementById('key-hint').textContent = key ? 'Key saved ✓' : 'Cleared';
+  setTimeout(() => document.getElementById('key-hint').textContent = 'Stored in browser only', 2000);
+  updateStatus();
+}
+
+function updateStatus() {
+  const dot = document.getElementById('status-dot');
+  const isOllama = activeModel.startsWith('llama') || activeModel.startsWith('phi');
+  const hasKey = localStorage.getItem('openai_key');
+  if (isOllama) { dot.className = 'status-dot'; return; }
+  dot.className = hasKey ? 'status-dot' : 'status-dot warn';
+}
+
+/* ── Tabs ── */
+function setTab(t) {
+  activeTab = t;
+  ['jobs','career','map'].forEach(id => {
+    document.getElementById('tab-'+id).className = 'tab' + (id===t?' active':'');
+  });
+  document.getElementById('map-wrap').className = 'map-wrap' + (t==='map'?' show':'');
+  const ph = {
+    jobs:   'Ask about jobs — role, location, experience level, remote...',
+    career: 'Ask about career growth, certifications, skills, salary...',
+    map:    'Ask about any career transition or use the map above...',
+  };
+  document.getElementById('inp').placeholder = ph[t];
+  if (t==='map'){
+    const ri = document.getElementById('role-inp');
+    if(profile.current_role && ri && !ri.value) ri.value = profile.current_role;
+    if(profile.current_role && mapData.nodes.length === 0) renderMapForRole(profile.current_role);
+  }
+}
+
+/* ── Context pills ── */
+function updCtx() {
+  const bar = document.getElementById('ctx-bar');
+  const pills = [];
+  if (profile.current_role)  pills.push(`<span class="cpill role"><span class="cdot"></span>${profile.current_role.split(' ').slice(0,3).join(' ')}</span>`);
+  if (profile.target_role)   pills.push(`<span class="cpill target"><span class="cdot"></span>→ ${profile.target_role.split(' ').slice(0,3).join(' ')}</span>`);
+  if (profile.location)      pills.push(`<span class="cpill loc"><span class="cdot"></span>${profile.location}</span>`);
+  if (profile.resume_loaded) pills.push(`<span class="cpill resume"><span class="cdot"></span>Resume loaded</span>`);
+  if (profile.jobs_count)    pills.push(`<span class="cpill jobs"><span class="cdot"></span>${profile.jobs_count} jobs found</span>`);
+  bar.innerHTML = pills.length ? pills.join('') : '<span class="ctx-empty">Chat freely — ask about jobs, career advice, or certifications</span>';
+}
+
+/* ── Chat helpers ── */
+function botAv() {
+  const d = document.createElement('div'); d.className='av';
+  d.innerHTML='<svg viewBox="0 0 24 24" width="11" height="11" fill="white"><path d="M4 16l2-8h12l2 8H4zm2-2h12l-1.5-6H7.5L6 14zM4 20h16v2H4v-2z"/></svg>';
+  return d;
+}
+
+function addBot(text, chips, extras) {
+  const msgs = document.getElementById('msgs');
+  const row = document.createElement('div'); row.className='mrow bot';
+  const right = document.createElement('div'); right.style.cssText='display:flex;flex-direction:column;max-width:87%';
+  if (text) {
+    const b = document.createElement('div'); b.className='bubble';
+    b.innerHTML = text.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
+    right.appendChild(b);
+  }
+  if (chips && chips.length) {
+    const ch = document.createElement('div'); ch.className='chips';
+    chips.forEach(c => {
+      const btn = document.createElement('button'); btn.className='chip'; btn.textContent=c;
+      btn.onclick = () => { if (!busy) { removeChips(); handleSend(c); } };
+      ch.appendChild(btn);
+    });
+    right.appendChild(ch);
+  }
+  if (extras) extras.forEach(e => right.appendChild(e));
+  row.appendChild(botAv()); row.appendChild(right);
+  msgs.appendChild(row); msgs.scrollTop = msgs.scrollHeight;
+}
+
+function addUser(text) {
+  const msgs = document.getElementById('msgs');
+  const row = document.createElement('div'); row.className='mrow user';
+  const av = document.createElement('div'); av.className='av'; av.textContent='You';
+  const b = document.createElement('div'); b.className='bubble'; b.textContent=text;
+  row.appendChild(b); row.appendChild(av);
+  msgs.appendChild(row); msgs.scrollTop = msgs.scrollHeight;
+}
+
+function showTyping() {
+  const msgs = document.getElementById('msgs');
+  const row = document.createElement('div'); row.className='mrow bot'; row.id='typing';
+  const t = document.createElement('div'); t.className='typing'; t.innerHTML='<span></span><span></span><span></span>';
+  row.appendChild(botAv()); row.appendChild(t);
+  msgs.appendChild(row); msgs.scrollTop = msgs.scrollHeight;
+}
+function rmTyping() { const t=document.getElementById('typing'); if(t) t.remove(); }
+function removeChips() { document.getElementById('msgs').querySelectorAll('.chips').forEach(c=>c.remove()); }
+function setBusy(v) { busy=v; document.getElementById('send-btn').disabled=v; document.getElementById('inp').disabled=v; }
+
+/* ── Send ── */
+function send() {
+  const v = document.getElementById('inp').value.trim();
+  if (!v || busy) return;
+  document.getElementById('inp').value='';
+  removeChips(); handleSend(v);
+}
+document.getElementById('inp').addEventListener('keydown', e => { if (e.key==='Enter') send(); });
+
+async function handleSend(text) {
+  if (busy) return;
+  setBusy(true); addUser(text); showTyping();
+
+  const moduleMap = {jobs:'job_finder', career:'career_chat', map:'career_map'};
+  const openaiKey = localStorage.getItem('openai_key') || '';
+
+  try {
+    const headers = {'Content-Type':'application/json'};
+    if (openaiKey) headers['X-OpenAI-Key'] = openaiKey;
+
+    const res = await fetch(`${API}/api/chat`, {
+      method:'POST', headers,
+      body: JSON.stringify({
+        message:text,
+        module: moduleMap[activeTab] || 'general',
+        model: activeModel,
+        session_id: sessionId,
+      })
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(()=>({}));
+      throw new Error(err.detail || `HTTP ${res.status}`);
+    }
+
+    const data = await res.json();
+    sessionId = data.session_id;
+    rmTyping();
+
+    // Sync session
+    if (data.profile_updated) await syncSession();
+
+    const extras = [];
+
+    // Job cards
+    if (data.jobs && data.jobs.length) {
+      profile.jobs_count = data.jobs.length; updCtx();
+      const wrap = document.createElement('div');
+      data.jobs.forEach(j => wrap.appendChild(makeJobCard(j)));
+      extras.push(wrap);
+    }
+
+    // Board links
+    if (data.boards && data.boards.length) {
+      const bwrap = makeBoardCards(data.boards);
+      if (bwrap) extras.push(bwrap);
+    }
+
+    // Map node
+    if (data.map_node) renderMapNode(data.map_node);
+
+    addBot(data.reply, getSuggestions(data.intent), extras);
+
+    if (activeTab==='map' && profile.current_role) renderMapForRole(profile.current_role);
+
+  } catch(e) {
+    rmTyping();
+    const isKeyErr = e.message.includes('401') || e.message.includes('API key') || e.message.includes('Authentication');
+    if (isKeyErr) {
+      addBot('OpenAI API key is missing or invalid. Please enter your key in the field above and click Save.', ['I\'ve added my key']);
+    } else {
+      addBot(`Something went wrong: ${e.message}`, ['Try again']);
+    }
+  }
+  setBusy(false);
+}
+
+/* ── Session sync ── */
+async function syncSession() {
+  if (!sessionId) return;
+  try {
+    const r = await fetch(`${API}/api/session/${sessionId}`);
+    if (!r.ok) return;
+    const d = await r.json();
+    if (d.profile) {
+      profile = {...profile, ...d.profile};
+      if (d.has_resume) profile.resume_loaded=true;
+      if (d.fetched_jobs_count>0) profile.jobs_count=d.fetched_jobs_count;
+    }
+    updCtx();
+    if (profile.current_role && activeTab==='map') renderMapForRole(profile.current_role);
+  } catch(e) {}
+}
+
+/* ── Job cards ── */
+function makeJobCard(j) {
+  const card = document.createElement('div'); card.className='jcard';
+  const daysLeft = j.close_date ? Math.ceil((new Date(j.close_date)-new Date())/(1000*60*60*24)) : null;
+  card.innerHTML = `
+    <div class="jsrc jsrc-${j.source === 'usajobs' ? 'usajobs' : j.source === 'adzuna' ? 'adzuna' : 'default'}">${
+      j.source === 'usajobs' ? 'USAJobs · Federal' :
+      j.source === 'adzuna'  ? 'Adzuna · Private sector' :
+      j.source || 'Job board'
+    }</div>
+    <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:4px">
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:600;color:var(--text)">${j.title}</div>
+        <div style="font-size:11px;color:var(--text2)">${j.company} · ${j.location}${j.salary?' · '+j.salary:''}</div>
+      </div>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:5px">
+      ${(j.tags||[]).map(t=>`<span class="jtag">${t}</span>`).join('')}
+    </div>
+    <div style="display:flex;align-items:center;flex-wrap:wrap">
+      <a href="${j.url}" target="_blank" style="font-size:11px;color:var(--blue);text-decoration:none">View &amp; apply →</a>
+      <button class="save-btn${j.saved?' saved':''}" id="save-${j.id}" onclick="saveJob('${j.id}',this)">${j.saved?'Saved':'Save'}</button>
+      ${daysLeft!==null&&daysLeft<=14?`<span class="close-date">Closes in ${daysLeft}d</span>`:''}
+    </div>`;
+  return card;
+}
+
+async function saveJob(id, btn) {
+  if (!sessionId) return;
+  try {
+    await fetch(`${API}/api/session/${sessionId}/save-job?job_id=${id}`, {method:'POST'});
+    btn.textContent='Saved'; btn.classList.add('saved');
+    await syncSession();
+  } catch(e){}
+}
+
+/* ── Board cards ── */
+function makeBoardCards(boards) {
+  if (!boards||!boards.length) return null;
+  const wrap = document.createElement('div'); wrap.style.cssText='margin-top:8px';
+  const hdr = document.createElement('div');
+  hdr.style.cssText='font-size:11px;font-weight:600;color:var(--text2);margin-bottom:5px';
+  hdr.textContent=`Job boards (${boards.length})`;
+  wrap.appendChild(hdr);
+  boards.slice(0,5).forEach(b => {
+    const a = document.createElement('a');
+    a.href=b.url; a.target='_blank'; a.className='board-card';
+    const geo = b.geo==='maine'?'Maine':'National';
+    const cls = b.geo==='maine'?'geo-maine':'geo-national';
+    a.innerHTML=`<div style="flex:1"><div style="display:flex;align-items:center;gap:5px;margin-bottom:2px"><span style="font-size:12px;font-weight:600;color:var(--text)">${b.name}</span><span class="board-geo ${cls}">${geo}</span></div><div style="font-size:11px;color:var(--text2)">${b.focus}</div></div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="13" height="13" style="flex-shrink:0;color:var(--text3)"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>`;
+    wrap.appendChild(a);
+  });
+  return wrap;
+}
+
+/* ── Suggestions ── */
+function getSuggestions(intent) {
+  const m = {
+    job_search:    ['Refine search','Show remote only','Career advice →','Career map →'],
+    career_advice: ['What certifications?','How to network?','Salary ranges','Career map →'],
+    skill_gap:     ['Find courses','Which jobs need these skills?','Career map →'],
+    salary_info:   ['Find jobs in this range','Career path advice'],
+    career_map:    ['Find jobs for target role','Full career roadmap','Career chat →'],
+    onet_lookup:   ['Find jobs for this role','What certs do I need?'],
+    general:       ['Find me jobs','Career advice','Show career map'],
+  };
+  return m[intent] || m.general;
+}
+
+/* ── Resume upload ── */
+async function uploadResume(file) {
+  if (!file) return;
+  const btn = document.getElementById('upload-btn');
+  btn.innerHTML='<span class="spin"></span> Parsing...';
+  btn.disabled=true;
+  const form = new FormData(); form.append('file', file);
+  const headers = {'X-Model': activeModel};
+  if (sessionId) headers['X-Session-Id']=sessionId;
+  const openaiKey = localStorage.getItem('openai_key') || '';
+  if (openaiKey) headers['X-OpenAI-Key']=openaiKey;
+  try {
+    const r = await fetch(`${API}/api/resume`, {method:'POST', headers, body:form});
+    if (!r.ok) { const e=await r.json().catch(()=>({})); throw new Error(e.detail||'Upload failed'); }
+    const d = await r.json();
+    sessionId=d.session_id;
+    profile={...profile,...d.profile,resume_loaded:true}; updCtx();
+    btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="13" height="13"><polyline points="20 6 9 17 4 12"/></svg> Resume loaded';
+    btn.classList.add('done');
+    document.getElementById('upload-hint').textContent=`${file.name} · ${d.profile.skills?.length||0} skills found`;
+    addBot(
+      `Resume loaded! Found ${d.profile.skills?.length||0} skills and ${d.profile.certifications?.length||0} certifications.\n\nProfile: ${d.profile.current_role||'role not detected'} · ${d.profile.experience_label||'experience unknown'} · ${d.profile.sector||'sector unknown'}${d.profile.location?' · '+d.profile.location:''}\n\nWhat would you like to do next?`,
+      ['Find matching jobs','Show my skill gaps','Plan my career path','Show my career map']
+    );
+    if (d.profile.current_role) {
+      const ri = document.getElementById('role-inp');
+      if(ri) ri.value = d.profile.current_role;
+      renderMapForRole(d.profile.current_role);
+    }
+  } catch(e) {
+    btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Upload resume (optional)';
+    btn.disabled=false;
+    addBot(`Resume upload failed: ${e.message}`);
+  }
+}
+
+/* ── Career map ── */
+const NW=116,NH=44;
+const NS={current:{fill:'#185FA5',stroke:'#0C447C',text:'#fff'},easy:{fill:'#EAF3DE',stroke:'#3B6D11',text:'#27500A'},medium:{fill:'#FAEEDA',stroke:'#854F0B',text:'#633806'},stretch:{fill:'#FCEBEB',stroke:'#A32D2D',text:'#791F1F'}};
+const EC={easy:'#3B6D11',medium:'#BA7517',stretch:'#A32D2D',current:'#888'};
+
+const PRESET_MAPS = {
+  'civil engineer':buildPreset('Civil engineer','highways',[['sr civil eng.','roads & bridges','easy'],['project engineer','highway delivery','easy'],['structural eng.','bridge & tunnels','medium'],['design manager','FHWA projects','medium'],['technical director','infrastructure','stretch']]),
+  'transportation engineer':buildPreset('Transportation eng.','highways',[['sr transport eng.','design & analysis','easy'],['traffic engineer','signal systems','easy'],['project manager','delivery','medium'],['planning manager','multimodal','medium'],['director of engineering','agency lead','stretch']]),
+  'gis specialist':buildPreset('GIS specialist','spatial',[['sr GIS analyst','transportation','easy'],['transit planner','network design','easy'],['data engineer','geospatial','medium'],['spatial scientist','mobility data','medium'],['ML engineer','geo-AI','stretch']]),
+  'transit planner':buildPreset('Transit planner','planning',[['sr transit planner','network ops','easy'],['data analyst','transit ops','easy'],['project manager','infrastructure','medium'],['policy analyst','transport','medium'],['smart mobility strategist','MaaS','stretch']]),
+  'traffic engineer':buildPreset('Traffic engineer','signals',[['sr traffic eng.','ITS & signals','easy'],['ITS engineer','intelligent transport','easy'],['transport modeller','demand & flow','medium'],['smart city eng.','connected vehicles','medium'],['mobility director','urban transport','stretch']]),
+  'logistics analyst':buildPreset('Logistics analyst','supply chain',[['sr logistics analyst','operations','easy'],['logistician','program mgmt','easy'],['logistics engineer','systems design','medium'],['supply chain manager','strategic','medium'],['VP supply chain','executive','stretch']]),
+  'air traffic controller':buildPreset('Air traffic controller','ATC',[['sr ATC specialist','TRACON','easy'],['ATC supervisor','facility ops','medium'],['airfield ops specialist','airport ops','easy'],['aviation safety analyst','FAA','medium'],['aviation program manager','FAA leadership','stretch']]),
+  'locomotive engineer':buildPreset('Locomotive engineer','rail ops',[['senior operator','freight/passenger','easy'],['railroad conductor','train management','easy'],['rail inspector','FRA compliance','medium'],['rail ops supervisor','yard management','medium'],['rail operations manager','network strategy','stretch']]),
+};
+
+function buildPreset(label,sub,targets){
+  const nodes=[{id:'c',label,sub,type:'current'}];
+  const edges=[];
+  targets.forEach(([l,s,t],i)=>{
+    const id='n'+(i+1);
+    nodes.push({id,label:l,sub:s,type:t});
+    edges.push(['c',id]);
+    if(i>0) edges.push(['n'+i,id]);
+  });
+  return {nodes,edges};
+}
+
+function renderMapForRole(role){
+  if(!role) return;
+  // Update the role input box
+  const ri = document.getElementById('role-inp');
+  if(ri && !ri.value) ri.value = role;
+  // Check presets first
+  const rl=role.toLowerCase();
+  const key=Object.keys(PRESET_MAPS).find(k=>rl.includes(k)||k.includes(rl.split(' ').slice(0,2).join(' ')));
+  if(key){
+    mapData=PRESET_MAPS[key];
+    drawMap();
+    document.getElementById('map-legend').style.display='flex';
+  } else {
+    // No preset — auto-generate via AI
+    generateMapForRole(role);
+  }
+}
+
+async function generateMapForRole(roleOverride) {
+  const role = roleOverride || document.getElementById('role-inp').value.trim();
+  if(!role) { alert('Please enter a role first'); return; }
+
+  // Update session profile
+  if(!roleOverride) {
+    profile.current_role = role;
+    updCtx();
+  }
+
+  const btn = document.getElementById('gen-map-btn');
+  btn.textContent = 'Generating...';
+  btn.disabled = true;
+  document.getElementById('map-detail').innerHTML =
+    '<div class="map-detail-empty"><span class="spin"></span>Generating career map for "' + role + '"...</div>';
+
+  // Check presets first
+  const rl = role.toLowerCase();
+  const key = Object.keys(PRESET_MAPS).find(k=>rl.includes(k)||k.includes(rl.split(' ').slice(0,2).join(' ')));
+  if(key){
+    mapData = PRESET_MAPS[key];
+    drawMap();
+    document.getElementById('map-legend').style.display = 'flex';
+    document.getElementById('map-detail').innerHTML = '<div class="map-detail-empty">Click any role node to see transition details</div>';
+    btn.textContent = 'Generate map'; btn.disabled = false;
+    return;
+  }
+
+  // No preset — ask AI to generate nearest roles
+  try {
+    const res = await fetch(`${API}/api/chat`, {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        message: `Generate a career map for a "${role}" in US transportation and infrastructure. ` +
+          `List 5 nearest roles this person can progress to — mix of easy lateral moves, upward promotions, and one stretch goal. ` +
+          `For each, return a map_node tag. Start with the easiest transitions.`,
+        module: 'career_map', model: activeModel, session_id: sessionId
+      })
+    });
+    const data = await res.json();
+    sessionId = data.session_id;
+
+    // Reset map with new current role
+    mapData = {
+      nodes: [{id:'c', label: role.split(' ').slice(0,3).join(' '), sub: 'your role', type:'current'}],
+      edges: []
+    };
+
+    // Parse map_node tags from reply
+    const nodePattern = /<map_node>([\s\S]*?)<\/map_node>/g;
+    let match, count = 0;
+    while((match = nodePattern.exec(data.reply)) !== null && count < 6){
+      try {
+        const node = JSON.parse(match[1].trim());
+        const id = 'ai_' + count++;
+        mapData.nodes.push({id, label:node.label, sub:node.sub||'', type:node.type||'medium'});
+        mapData.edges.push(['c', id]);
+      } catch(e){}
+    }
+
+    // If AI gave no structured nodes, show the text response
+    if(mapData.nodes.length === 1){
+      // Fallback: build a generic progression
+      const fallbackTargets = [
+        ['Senior ' + role.split(' ').slice(-1)[0], 'direct promotion', 'easy'],
+        ['Project manager', 'delivery & oversight', 'medium'],
+        ['Program manager', 'portfolio management', 'medium'],
+        ['Technical director', 'senior leadership', 'stretch'],
+      ];
+      fallbackTargets.forEach(([l,s,t],i)=>{
+        mapData.nodes.push({id:'f'+i, label:l, sub:s, type:t});
+        mapData.edges.push(['c','f'+i]);
+      });
+    }
+
+    drawMap();
+    document.getElementById('map-legend').style.display = 'flex';
+    document.getElementById('map-detail').innerHTML = '<div class="map-detail-empty">Click any role node to see transition details</div>';
+
+  } catch(e){
+    document.getElementById('map-detail').innerHTML = '<div class="map-detail-empty">Could not generate map. Try again.</div>';
+  }
+  btn.textContent = 'Generate map'; btn.disabled = false;
+}
+
+function clearMap(){
+  mapData = {nodes:[], edges:[]};
+  document.getElementById('map-legend').style.display='none';
+  document.getElementById('map-detail').innerHTML='<div class="map-detail-empty">Click a role node to see transition details</div>';
+  const svg=document.getElementById('map-svg');
+  while(svg.lastChild) svg.removeChild(svg.lastChild);
+  const t=document.createElementNS('http://www.w3.org/2000/svg','text');
+  t.setAttribute('x','340'); t.setAttribute('y','155'); t.setAttribute('text-anchor','middle');
+  t.setAttribute('font-size','13'); t.setAttribute('fill','#9c9a92');
+  t.textContent='Enter a role above and click Generate map';
+  svg.appendChild(t);
+  document.getElementById('role-inp').value='';
+  document.getElementById('role-inp').focus();
+}
+
+function renderMapNode(node){
+  if(!mapData.nodes.length) mapData.nodes=[{id:'c',label:profile.current_role||'Your role',sub:'current',type:'current'}];
+  const id='custom_'+Date.now();
+  mapData.nodes.push({id,label:node.label,sub:node.sub||'',type:node.type||'medium'});
+  mapData.edges.push(['c',id]);
+  if(activeTab==='map') drawMap();
+}
+
+function getPos(nodes){
+  const cx=340,cy=155,pos={};
+  nodes.find(n=>n.id==='c') && (pos['c']={x:cx,y:cy});
+  const others=nodes.filter(n=>n.id!=='c');
+  others.forEach((n,i,a)=>{
+    const angle=-Math.PI/2+(2*Math.PI*i/a.length);
+    pos[n.id]={x:Math.round(cx+196*Math.cos(angle)),y:Math.round(cy+105*Math.sin(angle))};
+  });
+  return pos;
+}
+
+function edgeEP(p1,p2){
+  const dx=p2.x-p1.x,dy=p2.y-p1.y,len=Math.sqrt(dx*dx+dy*dy)||1,ux=dx/len,uy=dy/len;
+  const hw=NW/2+3,hh=NH/2+3;
+  const off=(px,py,ex,ey)=>{const a=Math.abs(ex),b=Math.abs(ey);const t=a>0&&b/a<hh/hw?hw/a:hh/(b||0.001);return{x:px+ex*t,y:py+ey*t};};
+  const s=off(p1.x,p1.y,ux,uy),e=off(p2.x,p2.y,-ux,-uy);
+  return{x1:s.x,y1:s.y,x2:e.x,y2:e.y};
+}
+
+function drawMap(){
+  const svg=document.getElementById('map-svg');
+  while(svg.lastChild) svg.removeChild(svg.lastChild);
+  const defs=document.createElementNS('http://www.w3.org/2000/svg','defs');
+  defs.innerHTML=`<marker id="mah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>`;
+  svg.appendChild(defs);
+  const pos=getPos(mapData.nodes);
+  const nmap={};mapData.nodes.forEach(n=>nmap[n.id]=n);
+  (mapData.edges||[]).forEach(([f,t])=>{
+    if(!pos[f]||!pos[t]) return;
+    const ep=edgeEP(pos[f],pos[t]);
+    const col=EC[nmap[t]?.type]||'#888';
+    const ln=document.createElementNS('http://www.w3.org/2000/svg','line');
+    ln.setAttribute('x1',ep.x1);ln.setAttribute('y1',ep.y1);ln.setAttribute('x2',ep.x2);ln.setAttribute('y2',ep.y2);
+    ln.setAttribute('stroke',col);ln.setAttribute('stroke-width','1.5');ln.setAttribute('fill','none');ln.setAttribute('opacity','0.55');ln.setAttribute('marker-end','url(#mah)');
+    svg.appendChild(ln);
+  });
+  mapData.nodes.forEach(node=>{
+    const p=pos[node.id];if(!p) return;
+    const st=NS[node.type]||NS.medium;const isCur=node.id==='c';
+    const g=document.createElementNS('http://www.w3.org/2000/svg','g');
+    if(!isCur){g.setAttribute('cursor','pointer');g.addEventListener('mouseenter',()=>g.setAttribute('opacity','0.82'));g.addEventListener('mouseleave',()=>g.setAttribute('opacity','1'));g.addEventListener('click',()=>clickNode(node));}
+    const rx=document.createElementNS('http://www.w3.org/2000/svg','rect');
+    rx.setAttribute('x',p.x-NW/2);rx.setAttribute('y',p.y-NH/2);rx.setAttribute('width',NW);rx.setAttribute('height',NH);rx.setAttribute('rx','7');
+    rx.setAttribute('fill',st.fill);rx.setAttribute('stroke',st.stroke);rx.setAttribute('stroke-width',isCur?'2':'0.5');
+    g.appendChild(rx);
+    [[-6,'600',node.label],[9,'400',node.sub]].forEach(([dy,fw,txt])=>{
+      const t=document.createElementNS('http://www.w3.org/2000/svg','text');
+      t.setAttribute('x',p.x);t.setAttribute('y',p.y+dy);t.setAttribute('text-anchor','middle');t.setAttribute('dominant-baseline','central');
+      t.setAttribute('font-size','11');t.setAttribute('font-weight',fw);t.setAttribute('fill',st.text);
+      if(dy===9) t.setAttribute('opacity','0.7');
+      t.textContent=txt;g.appendChild(t);
+    });
+    svg.appendChild(g);
+  });
+}
+
+async function clickNode(node){
+  const fromRole=profile.current_role||'your current role';
+  document.getElementById('map-detail').innerHTML=`<div class="map-detail-empty"><span class="spin"></span>Loading transition details...</div>`;
+  const STEP_META={easy:{timeline:'1–6 months',diff:1,label:'Easy'},medium:{timeline:'6–18 months',diff:3,label:'Moderate'},stretch:{timeline:'18+ months',diff:5,label:'Challenging'}};
+  const meta=STEP_META[node.type]||STEP_META.medium;
+  try {
+    const res=await fetch(`${API}/api/chat`,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({message:`How do I transition from "${fromRole}" to "${node.label} – ${node.sub}"? Give me a brief summary, key steps, and salary info. Return JSON: {"summary":"2 sentences","steps":[{"type":"skill|cert|course","name":"...","detail":"..."}],"salary_from":"$X","salary_to":"$Y"}`,module:'career_map',model:activeModel,session_id:sessionId})});
+    const data=await res.json();
+    sessionId=data.session_id;
+    let steps=[],summary='',sf='',st='';
+    try{const m=data.reply.match(/\{[\s\S]*\}/);if(m){const d=JSON.parse(m[0]);summary=d.summary||'';steps=d.steps||[];sf=d.salary_from||'';st=d.salary_to||'';}}
+    catch{summary=data.reply;}
+    const diff=meta.diff;const dc=diff>=4?'dfh':diff>=3?'dfm':'dfe';
+    const tc={skill:'tsk',cert:'tct',course:'tco',exam:'tex'};
+    document.getElementById('map-detail').innerHTML=`
+      <div style="display:flex;align-items:center;gap:7px;margin-bottom:8px;flex-wrap:wrap">
+        <span style="font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;background:var(--blue-bg);color:var(--blue-dk)">${fromRole.split(' ').slice(0,3).join(' ')}</span>
+        <span style="color:var(--text3)">→</span>
+        <span style="font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;background:var(--green-bg);color:var(--green-dk)">${node.label}</span>
+        <span style="font-size:11px;padding:3px 9px;border-radius:20px;background:var(--bg2);color:var(--text2);margin-left:auto">${meta.timeline}</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;flex-wrap:wrap">
+        <span style="font-size:11px;color:var(--text2)">Difficulty: ${meta.label}</span>
+        <div>${[1,2,3,4,5].map(n=>`<span class="ddot ${n<=diff?dc:''}"></span>`).join('')}</div>
+        ${sf&&st?`<span style="font-size:11px;color:var(--text2);margin-left:auto">${sf} → <strong style="color:var(--green-dk)">${st}</strong></span>`:''}
+      </div>
+      ${summary?`<div style="font-size:12px;color:var(--text2);margin-bottom:8px;line-height:1.5">${summary}</div>`:''}
+      <div style="display:flex;flex-direction:column;gap:4px;margin-bottom:8px">
+        ${steps.map(s=>`<div style="border:0.5px solid var(--border);border-radius:var(--r);padding:6px 9px;display:flex;gap:6px;align-items:flex-start"><span class="it-type ${tc[s.type]||'tsk'}">${s.type}</span><div><div style="font-size:12px;font-weight:600;color:var(--text)">${s.name}</div><div style="font-size:11px;color:var(--text2);margin-top:1px">${s.detail}</div></div></div>`).join('')}
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <button onclick="goCareerChat('${fromRole}','${node.label}')" style="padding:6px 11px;font-size:12px;border:0.5px solid var(--blue);border-radius:var(--r);background:var(--blue);color:white;cursor:pointer">Full roadmap ↗</button>
+        <button onclick="findJobsFor('${node.label}')" style="padding:6px 11px;font-size:12px;border:0.5px solid var(--border2);border-radius:var(--r);background:transparent;color:var(--text);cursor:pointer">Find jobs ↗</button>
+      </div>`;
+  } catch(e){document.getElementById('map-detail').innerHTML=`<div class="map-detail-empty">Could not load details. Try again.</div>`;}
+}
+
+async function addRoleToMap(){
+  const role=document.getElementById('map-inp').value.trim();
+  if(!role) return;
+  document.getElementById('map-inp').value='';
+  document.getElementById('map-detail').innerHTML=`<div class="map-detail-empty"><span class="spin"></span>Generating node for "${role}"...</div>`;
+  try{
+    const res=await fetch(`${API}/api/chat`,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({message:`Add "${role}" to the career map for transportation and infrastructure.`,module:'career_map',model:activeModel,session_id:sessionId})});
+    const data=await res.json();sessionId=data.session_id;
+    if(data.map_node){renderMapNode(data.map_node);document.getElementById('map-legend').style.display='flex';}
+    else{renderMapNode({label:role.split(' ').slice(0,2).join(' '),sub:role.split(' ').slice(2).join(' '),type:'medium'});}
+    document.getElementById('map-detail').innerHTML=`<div class="map-detail-empty">Click the new node to see transition details</div>`;
+  }catch(e){document.getElementById('map-detail').innerHTML=`<div class="map-detail-empty">Could not add role. Try again.</div>`;}
+}
+document.getElementById('map-inp').addEventListener('keydown',e=>{if(e.key==='Enter') addRoleToMap();});
+document.getElementById('role-inp').addEventListener('keydown',e=>{if(e.key==='Enter') generateMapForRole();});
+
+function goCareerChat(from,to){setTab('career');document.getElementById('inp').value=`How do I progress from ${from} to ${to}?`;send();}
+function findJobsFor(role){setTab('jobs');document.getElementById('inp').value=`Find me jobs for ${role}`;send();}
+
+/* ── Init ── */
+addBot(
+  "Hi! I'm your career assistant for US transportation and infrastructure.\n\nI can help you:\n• Find real federal and private sector jobs across the USA\n• Plan your career path with certifications and resources\n• Explore role transitions on the interactive career map\n\nUpload your resume below for personalised results, or just start chatting.",
+  ['Find me transit jobs','Plan my career path','What certs do I need for civil engineering?','Show career map']
+);
+updCtx();
+updateStatus();
+</script>
+</body>
+</html>
