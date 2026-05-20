@@ -1,0 +1,37 @@
+services:
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    ports:
+      - "6333:6333"
+    volumes:
+      - qdrant_data:/qdrant/storage
+    restart: unless-stopped
+
+  backend:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - USAJOBS_API_KEY=${USAJOBS_API_KEY:-}
+      - USAJOBS_EMAIL=${USAJOBS_EMAIL:-}
+      - ADZUNA_APP_ID=${ADZUNA_APP_ID:-}
+      - ADZUNA_APP_KEY=${ADZUNA_APP_KEY:-}
+      - QDRANT_URL=http://qdrant:6333
+      - OLLAMA_BASE_URL=${OLLAMA_BASE_URL:-http://host.docker.internal:11434/v1}
+      - EMBED_MODEL=${EMBED_MODEL:-BAAI/bge-small-en-v1.5}
+      - ONET_DATA_DIR=/app/data/onet
+    volumes:
+      - ./backend:/app/backend
+      - ./frontend:/app/frontend
+      - ./data:/app/data
+    depends_on:
+      - qdrant
+    command: uvicorn backend.main:app --host 0.0.0.0 --port 8000 --reload
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+
+volumes:
+  qdrant_data:
